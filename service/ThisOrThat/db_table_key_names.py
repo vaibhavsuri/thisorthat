@@ -8,6 +8,10 @@ post_this_txt = "thisText"
 post_that_txt = "thatText"
 post_tags = "tags"
 post_frds = "friends"
+post_frds_frd_id = "friendId"
+post_frds_vote = "vote"
+post_frds_vote_time = "voteTime"
+post_frds_response_time = "responseTime"
 post_created_time = "creationTime"
 post_exp_time = "expirationTime"
 post_this_count = "thisCount"
@@ -64,6 +68,23 @@ class Post:
     @staticmethod
     def get_friends_key():
         return post_frds
+    
+    @staticmethod
+    def get_friends_frd_id_key():
+        return post_frds_frd_id
+    
+    @staticmethod
+    def get_friends_vote_key():
+        return posts_frds_vote
+    
+    @staticmethod
+    def get_friends_vote_time_key():
+        return post_frds_vote_time
+    
+    @staticmethod
+    def get_friends_resp_time_key():
+        return post_frds_response_time
+    
     
     @staticmethod
     def get_creation_time_key():

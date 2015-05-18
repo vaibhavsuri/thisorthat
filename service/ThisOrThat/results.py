@@ -2,6 +2,24 @@ __author__ = "sreeram"
 
 import json
 
+" project specific imports "
+import db_table_key_names as db_keys
+from getDynamoDB import get_user_item, get_post_item
+
+def get_all_created_post_ids(user_id):
+    user_item = get_user_item(user_id)
+    created_post_ids = user_item[db_keys.Users.get_created_posts_key()]
+    return created_post_ids
+
+def get_all_voted_post_ids(user_id):
+    user_item = get_user_item(user_id)
+    voted_post_ids = user_item[db_keys.Users.get_voted_posts_key()]
+    return voted_post_ids
+
+def get_post_details(post_id):
+    post_item = get_post_item(post_id)
+    
+
 def send_my_results(user_id):
     """ returns the my-results of a user_id """
     my_results = []
