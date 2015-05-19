@@ -25,15 +25,13 @@ user = {keys.users_id: 0,
 		keys.users_email: "",
 		keys.users_token: "",
 		keys.users_last_seen: "",
-		keys.users_location:{users_location_lat:0.0, users_location_long:0.0, users_location_place:""},
+		keys.users_location:{keys.users_location_lat:0.0, keys.users_location_long:0.0, keys.users_location_place:""},
 		keys.users_created_posts: [],
 		keys.users_voted_posts: [],
 		keys.users_unvoted_posts: []
 }
 
-tag = {keys.tag_id = 0,
-		keys.tag_name = ""
-}
+tag = {keys.tag_id : 0, keys.tag_name : ""}
 
 def get_similar_template():
 	similar = {keys.users_id: 0,
@@ -46,17 +44,16 @@ def get_similar_template():
 	return similar
 
 def validate(item, item_type):
-	if item_type == "post":
-		auth_item = post
-	elif item_type == "user":
-		auth_item = user
-	else
-		auth_item = tag
-	try:
-		for key in auth_item:
-			if (type(auth_item[key]) != type(item[key])):
-				return False
-		return True
-	except Exception, e:
-		print e
-	
+    if item_type == "post":
+        auth_item = post
+    elif item_type == "user":
+        auth_item = user
+    else:
+        auth_item = tag
+    try:
+        for key in auth_item:
+            if (type(auth_item[key]) != type(item[key])):
+                return False
+        return True
+    except Exception, e:
+        print e
