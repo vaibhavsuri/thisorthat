@@ -4,6 +4,7 @@ from flask import request
 
 " importing modules of the current project "
 from results import send_my_results, send_others_results
+from vote import set_my_decision
 # from store_data import *
 # import feed
 # import vote
@@ -44,6 +45,10 @@ def get_feed(uid):
 @app.route("/posts/vote/<user_id>/<post_id>/<option_id>")
 def place_vote(user_id, post_id, option_id):
     return set_vote(user_id, post_id, option_id)
+
+@app.route("/posts/decision/<user_id>/<post_id>/<option_id>")
+def place_my_decision(user_id,post_id,option_id):
+    set_my_decision(user_id,post_id,option_id)
 
 @app.route("/results/myResults/<user_id>")
 def get_my_results(user_id):
