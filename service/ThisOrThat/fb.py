@@ -35,6 +35,14 @@ def get_email(user_id):
 	else
 		return None
 
+#returns the user's email address
+def get_email_from_token(user_access_token):
+	graph = facebook.GraphAPI(access_token=user_access_token)
+	info = graph.get_connections("me","")
+	if (info.has_key("email")):
+		return info["email"]
+	else
+		return None
 
 #returns a user's likes (catergory and node_id)
 def get_likes(user_id):
