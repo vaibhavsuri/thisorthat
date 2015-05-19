@@ -1,3 +1,5 @@
+__author__ = 'vaibhavsuri'
+
 import datetime
 import calendar
 
@@ -11,4 +13,8 @@ def get_string(input_string):
 def get_epoch_now():
 	return calendar.timegm(time.gmtime())
 
+def get_element_position(list, key, value):
+	for i in range(0, len(list)):
+		if (i[key] == value):
+			return i
 

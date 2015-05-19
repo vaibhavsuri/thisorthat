@@ -3,6 +3,7 @@ from flask import request
 # from store_data import *
 # import feed
 # import vote
+# import friends
 app = Flask(__name__)
 
 
@@ -30,13 +31,17 @@ def store_user_info():
 def store_user_info():
     return send_tags()
 
-@app.route("/feed/<uid>")
-def get_feed(uid):
-    return send_feed(uid)
+@app.route("/feed/<user_id>", methods=["GET"])
+def get_feed(user_id):
+    return feed.send_feed(uid)
 
-@app.route("/posts/vote/<user_id>/<post_id>/<option_id>")
+@app.route("/posts/vote/<user_id>/<post_id>/<option_id>", methods=["POST"])
 def place_vote(user_id, post_id, option_id):
-    return set_vote(user_id, post_id, option_id)
+    vote.set_vote(user_id, post_id, option_id)
+
+@app.route("/friends/<user_id>/<tag_id>", methods=["GET"])
+def get_friends(user_id, tag_id):
+    return friends.send_friends(user_id, tag_id)
 
 @app.errorhandler(500)
 def internal_error(error):

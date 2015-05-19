@@ -38,6 +38,14 @@ users_unvoted_posts = "unvotedPosts"
 tag_id = "id"
 tag_name = "name"
 
+"Similar table keys"
+#User ID key is same as the one for user table
+similar_books = "Books"
+similar_movies = "Movies"
+similar_music = "Music"
+#for secondary tags, refer to sec_tags.py
+
+
 class Post:
     
     @staticmethod

@@ -1,4 +1,7 @@
+__author__ = 'vaibhavsuri'
+
 import db_table_key_names as keys
+import sec_tags
 
 post = {keys.post_id: 0,
 		keys.post_creator: 0,
@@ -31,6 +34,16 @@ user = {keys.users_id: 0,
 tag = {keys.tag_id = 0,
 		keys.tag_name = ""
 }
+
+def get_similar_template():
+	similar = {keys.users_id: 0,
+			   keys.similar_books: [],
+			   keys.similar_movies: [],
+			   keys.similar_music: [],
+	}
+	for tag in sec_tags.tags:
+		similar[tag] = []
+	return similar
 
 def validate(item, item_type):
 	if item_type == "post":
