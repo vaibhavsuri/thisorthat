@@ -1,4 +1,5 @@
 __author__ = 'vaibhavsuri'
+#ontology for secondary interests (i.e. interests apart from books, music and movies)
 
 tags = {"TV": ["TV Show", "TV Network", "TV Channel"],
 		"Person": ["Athlete", "Artist", "Public Figure", "Journalist", "News Personality", "Business Person", "Comedian", "Entertainer", "Teacher", "Dancer", "Politician", "Government Official"],
