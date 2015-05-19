@@ -25,6 +25,17 @@ def get_friend_ids(user_id):
 	       print "Key Error"
 	return friend_ids
 
+#returns the user's email address
+def get_email(user_id):
+	users_token = get_access_token(user_id)
+	graph = facebook.GraphAPI(access_token=users_token)
+	info = graph.get_connections("me","")
+	if (info.has_key("email")):
+		return info["email"]
+	else
+		return None
+
+
 #returns a user's likes (catergory and node_id)
 def get_likes(user_id):
 	likes_list = []
