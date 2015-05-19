@@ -1,8 +1,15 @@
 from flask import Flask
 from flask import request
+
+
+" importing modules of the current project "
+from results import send_my_results, send_others_results
 # from store_data import *
 # import feed
 # import vote
+
+
+
 app = Flask(__name__)
 
 
@@ -37,6 +44,14 @@ def get_feed(uid):
 @app.route("/posts/vote/<user_id>/<post_id>/<option_id>")
 def place_vote(user_id, post_id, option_id):
     return set_vote(user_id, post_id, option_id)
+
+@app.route("/results/myResults/<user_id>")
+def get_my_results(user_id):
+    return send_my_results(user_id)
+
+@app.route("/results/othersResults/<user_id>")
+def get_others_results(user_id):
+    return send_others_results(user_id)
 
 @app.errorhandler(500)
 def internal_error(error):
