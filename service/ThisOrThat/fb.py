@@ -27,22 +27,24 @@ def get_friend_ids(user_id):
 
 #returns the user's email address
 def get_email(user_id):
-	users_token = get_access_token(user_id)
-	graph = facebook.GraphAPI(access_token=users_token)
-	info = graph.get_connections("me","")
-	if (info.has_key("email")):
-		return info["email"]
-	else
-		return None
+    users_token = get_access_token(user_id)
+    graph = facebook.GraphAPI(access_token=users_token)
+    info = graph.get_connections("me", "")
+    if info.has_key("email"):
+        email = info["email"]
+    else:
+        email = None
+    return email
 
-#returns the user's email address
+
+# returns the user's email address
 def get_email_from_token(user_access_token):
-	graph = facebook.GraphAPI(access_token=user_access_token)
-	info = graph.get_connections("me","")
-	if (info.has_key("email")):
-		return info["email"]
-	else
-		return None
+    graph = facebook.GraphAPI(access_token=user_access_token)
+    info = graph.get_connections("me", "")
+    if (info.has_key("email")):
+        return info["email"]
+    else:
+        return None
 
 #returns a user's likes (catergory and node_id)
 def get_likes(user_id):
@@ -63,47 +65,50 @@ def get_likes(user_id):
 			break
 	return likes_list
 
-#returns the ids of books liked by a user
+
+# returns the ids of books liked by a user
 def get_books(user_id):
-	books_list = []
-	users_token = get_access_token(user_id)
-	graph = facebook.GraphAPI(access_token=users_token)
-	books = graph.get_connections("me","likes")
-	while(books['data']):
-		try:
-			for book in books['data']:
-				books_list.append(book['id'])
-			books = requests.get(books['paging']['next']).json()
-		except KeyError:
-	       print "Key Error"
-	return books_list
+    books_list = []
+    users_token = get_access_token(user_id)
+    graph = facebook.GraphAPI(access_token=users_token)
+    books = graph.get_connections("me", "likes")
+    while books['data']:
+        try:
+            for book in books['data']:
+                books_list.append(book['id'])
+            books = requests.get(books['paging']['next']).json()
+        except KeyError:
+            print "Key Error"
+    return books_list
 
-#returns the ids of music liked by a user
+
+# returns the ids of music liked by a user
 def get_music(user_id):
-	music_list = []
-	users_token = get_access_token(user_id)
-	graph = facebook.GraphAPI(access_token=users_token)
-	musics = graph.get_connections("me","likes")
-	while(musics['data']):
-		try:
-			for music in musics['data']:
-				music_list.append(music['id'])
-			musics = requests.get(musics['paging']['next']).json()
-		except KeyError:
-	       print "Key Error"
-	return music_list
+    music_list = []
+    users_token = get_access_token(user_id)
+    graph = facebook.GraphAPI(access_token=users_token)
+    musics = graph.get_connections("me", "likes")
+    while musics['data']:
+        try:
+            for music in musics['data']:
+                music_list.append(music['id'])
+            musics = requests.get(musics['paging']['next']).json()
+        except KeyError:
+            print "Key Error"
+    return music_list
 
-#returns the ids of movies liked by a user
+
+# returns the ids of movies liked by a user
 def get_movies(user_id):
-	movies_list = []
-	users_token = get_access_token(user_id)
-	graph = facebook.GraphAPI(access_token=users_token)
-	movies = graph.get_connections("me","likes")
-	while(movies['data']):
-		try:
-			for movie in movies['data']:
-				movies_list.append(movie['id'])
-			movies = requests.get(movies['paging']['next']).json()
-		except KeyError:
-	       print "Key Error"
-	return movies_list
+    movies_list = []
+    users_token = get_access_token(user_id)
+    graph = facebook.GraphAPI(access_token=users_token)
+    movies = graph.get_connections("me", "likes")
+    while movies['data']:
+        try:
+            for movie in movies['data']:
+                movies_list.append(movie['id'])
+            movies = requests.get(movies['paging']['next']).json()
+        except KeyError:
+            print "Key Error"
+    return movies_list
