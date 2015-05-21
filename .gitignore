@@ -1,5 +1,6 @@
 # aws-connection key,password file
 service/ThisOrThat/getDynamoDB.py
+service/ThisOrThat/getSQSConn.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
