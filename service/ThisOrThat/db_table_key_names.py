@@ -1,4 +1,3 @@
-
 "Post table keys"
 post_id = "id"
 post_creator = "creator"
@@ -27,13 +26,24 @@ users_email = "email"
 users_token = "facebookToken"
 users_last_seen = "lastSeenTimeStamp"
 users_location = "location"
+users_location_lat = "lat"
+users_location_long = "long"
+users_location_place = "place"
 users_created_posts = "createdPosts"
 users_voted_posts = "votedPosts"
-users_unvoted_posts = "unVotedPosts"
+users_unvoted_posts = "unvotedPosts"
 
 "Tag table keys"
 tag_id = "id"
 tag_name = "name"
+
+"Similar table keys"
+#User ID key is same as the one for user table
+similar_books = "Books"
+similar_movies = "Movies"
+similar_music = "Music"
+#for secondary tags, refer to sec_tags.py
+
 
 class Post:
     
@@ -75,7 +85,7 @@ class Post:
     
     @staticmethod
     def get_friends_vote_key():
-        return posts_frds_vote
+        return post_frds_vote
     
     @staticmethod
     def get_friends_vote_time_key():
@@ -84,7 +94,6 @@ class Post:
     @staticmethod
     def get_friends_resp_time_key():
         return post_frds_response_time
-    
     
     @staticmethod
     def get_creation_time_key():
