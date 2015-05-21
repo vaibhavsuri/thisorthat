@@ -25,12 +25,21 @@ def get_feed(user_id):
 
 @app.route("/posts/vote/<user_id>/<post_id>/<option_id>", methods=["POST"])
 def place_vote(user_id, post_id, option_id):
-    vote.set_vote(int(user_id), int(post_id), int(option_id))
-
+    return vote.set_vote(int(user_id), int(post_id), int(option_id))
 
 @app.route("/friends/<user_id>/<tag_id>", methods=["GET"])
 def get_friends(user_id, tag_id):
     return friends.send_friends(int(user_id), int(tag_id))
+
+############## TESTING SECTION #####################
+
+# ####  COMPUTING SIMILAR FRIENDS ####
+# @app.route("/similar/<user_id>/", methods=["GET"])
+# def set_similar_friends(user_id):
+#     similar_friends.compute_similar_friends(int(user_id))
+#     return "SIMILAR FRIENDS SET"
+
+####################################################
 
 @app.errorhandler(500)
 def internal_error(error):

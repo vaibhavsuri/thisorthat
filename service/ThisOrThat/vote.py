@@ -69,3 +69,6 @@ def set_vote(user_id, post_id, option_id):
 	if (verify_time(post_id) and verify_not_voted(user_id, post_id)): #if post not expired, apply DB updates and return SUCCESS after done
 		update_post_db(user_id, post_id, option_id) 
 		update_user_db(user_id, post_id)
+		return "Success"
+	else:
+		return "Cannot Vote"

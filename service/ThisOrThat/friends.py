@@ -7,7 +7,10 @@ import response_format
 #returns the ids of similar friends for a tag
 def get_friend_ids_tag(user_id, tag_name):
 	similar_item = db.get_similar_item(user_id)
-	return similar_item[tag_name]
+	friend_ids = []
+	for friend in similar_item[tag_name]:
+		friend_ids.append(int(friend))
+	return friend_ids
 
 #returns the friends of a user segmented based on "suggested" and others
 def segment_friends(user_id, tag_name):
@@ -35,7 +38,7 @@ def segment_friends(user_id, tag_name):
 #returns the taggable friends for a post
 def send_friends(user_id, tag_id):
 	tag_name = db.get_tag_name(tag_id)
-	segmented_friends = segment_friends(user_id, tag_id)
+	segmented_friends = segment_friends(user_id, tag_name)
 	segmented_friends_json = json.dumps(segmented_friends) #creating JSON
 	return segmented_friends_json
 

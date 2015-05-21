@@ -19,7 +19,7 @@ def get_friend_ids(user_id):
 	while(friends['data']):
 	    try:
 	        for friend in friends['data']:
-	            friend_ids.append(friend['id'])
+	            friend_ids.append(int(friend['id']))
 	        friends=requests.get(friends['paging']['next']).json()
 	    except KeyError:
 	       print "Key Error"
@@ -112,3 +112,18 @@ def get_movies(user_id):
         except KeyError:
             print "Key Error"
     return movies_list
+
+# getting first name, last name, profile photo
+def get_user_details(user_id):
+    item = db.get_user_item(user_id)
+    user_info = {}
+    user_info["first_name"] = item[keys.users_fname]
+    user_info["last_name"] = item[keys.users_lname]
+    user_info["profile_photo"] = user_picture(item[keys.users_token])
+    return user_info
+
+#returns Facebook URL for a user's profile photo
+def user_picture(user_token):
+    graph = facebook.GraphAPI(access_token=user_token)
+    photo = graph.get_connections("me", "picture")
+    return photo["url"]
