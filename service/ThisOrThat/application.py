@@ -17,11 +17,15 @@ first_name (Type: string)
 last_name (Type: string)
 """
 
-@app.route('/user_info')
+@app.route('/user_info', methods=["GET", "POST"])
 def store_user_info():
-    print "VALUE : ",request.form
+    print "VALUE : ",request.data
     uid = request.form("uid")
     token = request.form("token")
+    first_name = request.form("first_name")
+    last_name = request.form("last_name")
+    print "HERE : " + str(uid) +"|" + str(token) +"|"+ str(first_name) + "|" + str(last_name)
+    print token
     store_data.store_user_data(uid, token)
 
 @app.route('/get_all_tags')
