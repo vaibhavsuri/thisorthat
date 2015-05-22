@@ -1,9 +1,12 @@
 __author__ = 'vaibhavsuri'
 
+" importing other modules of the current project"
+from getDynamoDB import get_post_item
+from db_table_key_names import Post
 import getDynamoDB as db
 import util
 import db_table_key_names as keys
-#import datetime
+
 
 #function to check if the post has expired. Returns True if expired, False otherwise.
 def verify_time(post_id):
@@ -72,3 +75,9 @@ def set_vote(user_id, post_id, option_id):
 		return "Success"
 	else:
 		return "Cannot Vote"
+	
+def set_my_decision(user_id,post_id,option_id):
+	" updates the final decision of the creator on the post created by him"
+	post_item = get_post_item(post_id)
+	post_item[Post.get_decision_key()] = option_id
+	post_item.partial_save()

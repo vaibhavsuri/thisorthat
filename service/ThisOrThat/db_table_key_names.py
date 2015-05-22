@@ -1,4 +1,3 @@
-
 "Post table keys"
 post_id = "id"
 post_creator = "creator"
@@ -86,7 +85,7 @@ class Post:
     
     @staticmethod
     def get_friends_vote_key():
-        return posts_frds_vote
+        return post_frds_vote
     
     @staticmethod
     def get_friends_vote_time_key():
