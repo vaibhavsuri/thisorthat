@@ -20,12 +20,12 @@ post = {keys.post_id: 0,
 }
 
 user = {keys.users_id: 0,
-		keys.users_fname: "",
-		keys.users_lname: "",
-		keys.users_email: "",
-		keys.users_token: "",
-		keys.users_last_seen: "",
-		keys.users_location:{keys.users_location_lat:0.0, keys.users_location_long:0.0, keys.users_location_place:""},
+		keys.users_fname: None,
+		keys.users_lname: None,
+		keys.users_email: None,
+		keys.users_token: None,
+		keys.users_last_seen: None,
+		keys.users_location:{keys.users_location_lat:0.0, keys.users_location_long:0.0, keys.users_location_place:None},
 		keys.users_created_posts: [],
 		keys.users_voted_posts: [],
 		keys.users_unvoted_posts: []

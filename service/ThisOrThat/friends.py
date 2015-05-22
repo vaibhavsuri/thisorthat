@@ -1,6 +1,6 @@
 import fb
 import json
-import getDynamoDb as db
+import getDynamoDB as db
 import db_table_key_names as keys
 import response_format 
 

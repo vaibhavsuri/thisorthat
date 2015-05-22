@@ -3,45 +3,51 @@ __author__ = 'ananyapoddar'
 import getDynamoDB as db
 import db_schema as db_schema
 import db_table_key_names as keys
-import fb
+import fb, json
+import similar_friends
 from collections import OrderedDict
 
 
 # Global Cache #
-tags_cache = {}
+tags_cache = []
+tags_cached = False
 
 
-def store_user_data(uid, token):
+def store_user_data(uid, token, first_name, last_name):
     """ Stores user_info into the 'user' DB Schema created in db_schema
     Get Email, first name, last name by function calls"""
-
-    # access token = "CAACEdEose0cBAEZBAbuXNqZBx6iC6snMwYscB3mZC9cDADpGOJSgPVoXWu28bUcRJJzsSgIJFsFIOouuj6g9xHZCxojeelKNZBRKRsHKM76ap4Yr9ZA1CT0qyXANRONtBfUp5Xf3ByzfAZBZA9RZB6LWciIO5J0VLMdvly6DFBurWdTArD5lLPYYZAb5hcgiznOG7hSOXNIGUNlDrfyZBNZB246ZBWMxCVnQQhXqzT3AZC3kpV0AZDZD"
-    # user_id = "ananya0112@gmail.com"
+    ##
     db_schema.user[keys.users_id] = uid
     db_schema.user[keys.users_token] = token
+    db_schema.user[keys.users_fname] = first_name
+    db_schema.user[keys.users_lname] = last_name
 
-    # if token.length>0:
     email_id = fb.get_email_from_token(token)
-    if not email_id: # If email_id is None
-        email_id = ""
     db_schema.user[keys.users_email] = email_id
+    # Get firstname, lastname Pending #
+    user_inserted = db.user_db.put_item(data = db_schema.user)
 
-    # Get firstname, lastname| validate | Pending #
-    # db.user_db.put_item(data = db_schema.user)
-    print db_schema.user
+    similar_item = db_schema.get_similar_template()
+    similar_item[keys.users_id] = uid
+    sim_item_inserted = db.similar_db.put_item(data=similar_item)
+    similar_friends.compute_similar_friends(uid)
 
-# # Next : Tags (Verify)
-# def cache_tags():
-#     tags_db = db.tags_db
-#     # get all tags from the db #
-#     all_tags = tags_db.find()
-#     tags_cache = [each_tag.to_mongo() for each_tag in all_tags]
-#     return tags_cache
-#
-# tags_cache = cache_tags()
-#
-# def send_tags():
-#     return tags_cache
+
+def cache_tags():
+    global tags_cache
+    if not tags_cached:
+       # Cache tags from DB
+        tags_results = db.tag_db.scan()
+        for tag in tags_results:
+            single_tag = {}
+            single_tag["id"] = int(tag[keys.tag_id])
+            single_tag["name"] = tag[keys.tag_name]
+            tags_cache.append(single_tag)
+    return tags_cache
+
+
+def send_tags():
+    return json.dumps(cache_tags())
 
 
 def create_frds_dict(user_id):
@@ -49,7 +55,7 @@ def create_frds_dict(user_id):
     # The friends who have ever posted in response to this user_id | My aggregate dictionary
     user_item = db.get_user_item(user_id)
     all_post_id = user_item[keys.users_created_posts]
-    users_posts_count = len(all_post_id)
+    # users_posts_count = len(all_post_id)
     for post_id in all_post_id:
         post = db.get_post_item(post_id)
         # A SINGLE post item with all the info extracted from the database :
@@ -58,29 +64,34 @@ def create_frds_dict(user_id):
             # A single friend item/object!
             friend_id, response_time = friend[keys.post_frds_frd_id], friend[keys.post_frds_response_time]
             voted_count, intersection_count = 0, 0
-            if friend[keys.post_frds_vote].strip() != "skip":
-                voted_count = 1
-            # Count the intersection votes :
-            if friend[keys.post_frds_vote].strip() == post_decision.strip():
-                intersection_count = 1
-            if friend_id in user_friends:
-                # Simply update values
-                user_friends[friend_id]["tag_count"] += 1
-                user_friends[friend_id]["voted_count"] += voted_count
-                user_friends[friend_id]["total_response_time"] += response_time
-                user_friends[friend_id]["match_votes"] += intersection_count
+            if friend[keys.post_frds_vote]:
+                # Perform these steps if & only if the friend vote is not None
+                if friend[keys.post_frds_vote].strip() != "skip":
+                    voted_count = 1
+                # Count the intersection votes :
+                if post_decision:
+                    if friend[keys.post_frds_vote].strip() == post_decision.strip():
+                        intersection_count = 1
+                if friend_id in user_friends:
+                    # Simply update values
+                    user_friends[friend_id]["tag_count"] += 1
+                    user_friends[friend_id]["voted_count"] += voted_count
+                    user_friends[friend_id]["total_response_time"] += response_time
+                    user_friends[friend_id]["match_votes"] += intersection_count
 
-            elif friend_id not in user_friends:
-                # If this friend appears for the first time in the list, put initial values i.e value of this object
-                friend_val = {"tag_count": 1, "voted_count": voted_count, "total_response_time": response_time,
-                              "match_votes": intersection_count}
-                user_friends[friend_id] = friend_val
+                elif friend_id not in user_friends:
+                    # If this friend appears for the first time in the list, put initial values i.e value of this object
+                    friend_val = {"tag_count": 1, "voted_count": voted_count, "total_response_time": response_time,
+                                  "match_votes": intersection_count}
+                    user_friends[friend_id] = friend_val
+    print "User-Friends aggregate dictionary : ", user_friends
     return user_friends
 
 
 def get_fastest_responders(user_friends, max_no):
     # Send user_friends dictionary for that corresponding user_id | sorted(a.items(), key=lambda x:x[1][1])
     # Returns a list of user_id's | max_no represents the total no. of user_id's that will be returned
+    print "Starting fastest responders"
     fast_resp = OrderedDict(sorted(user_friends.items(), key=lambda kv: kv[1]['total_response_time']/kv[1]['voted_count']))
     if len(fast_resp) < max_no:
         max_no = len(fast_resp)
@@ -90,12 +101,14 @@ def get_fastest_responders(user_friends, max_no):
         score = fast_resp[fast_resp.keys()[i]]['total_response_time']/fast_resp[fast_resp.keys()[i]]['voted_count']
         fastest_resp.append((fast_resp.keys()[i], score))
         i += 1
+    print "Fastest resp : ", fastest_resp
     return fastest_resp
 
 
 def get_frequent_responders(user_friends, max_no):
     # Send user_friends dictionary for that corresponding user_id | sorted(a.items(), key=lambda x:x[1][1])
     # max_no represents the total no. of user_id's that will be returned
+    print "Starting frequent responders"
     freq_resp = OrderedDict(sorted(user_friends.items(), key=lambda kv: kv[1]['voted_count']/kv[1]['tag_count'], reverse=True))
     if len(freq_resp) < max_no:
         max_no = len(freq_resp)
@@ -105,11 +118,13 @@ def get_frequent_responders(user_friends, max_no):
         score = freq_resp[freq_resp.keys()[i]]['voted_count']/freq_resp[freq_resp.keys()[i]]['tag_count']
         frequent_resp.append((freq_resp.keys()[i], score))
         i += 1
+    print "Freq resp ", frequent_resp
     return frequent_resp
 
 
 def get_top_influencer(user_friends, max_no):
     # max_no represents the total no. of user_id's that will be returned
+    print "Starting Top Influencer "
     top_inf = OrderedDict(sorted(user_friends.items(), key=lambda kv: kv[1]['match_votes']/kv[1]['tag_count'], reverse=True))
     if len(top_inf) < max_no:
         max_no = len(top_inf)
@@ -119,6 +134,7 @@ def get_top_influencer(user_friends, max_no):
         score = top_inf[top_inf.keys()[i]]['match_votes']/top_inf[top_inf.keys()[i]]['tag_count']
         top_influencer.append((top_inf.keys()[i], score))
         i += 1
+    print "Top INF", top_influencer
     return top_influencer
 
 def get_stat_attr(list_user_data):
@@ -141,4 +157,3 @@ def get_statistics(user_id, max_no):
     statistics = {"fastest_responders": get_stat_attr(fastest_responders), "frequent_responder":
                                 get_stat_attr(frequent_responder), "top_influencers": get_stat_attr(top_influencers)}
     return statistics
-

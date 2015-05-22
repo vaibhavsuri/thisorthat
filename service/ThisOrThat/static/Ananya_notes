@@ -1,3 +1,12 @@
 # return getMongoDB.somevar
 
 # http://stackoverflow.com/questions/20577840/python-dictionary-sorting-in-descending-order-based-on-values
+
+
+# from store_data import *
+# store_user_data(1585502638394631, "CAACEdEose0cBAFYQlFgFrVSzPD0uQolKmae8aDSJSFqrwVuRzZCQpB42hQuJZAZAkQccoP3QZBjWV3WSV763aqfXok4Lmvt3r9oa6UDZCUovtVQJgBnStXI4d2zswh3aSaSs3afpXfKGdeGC8hdUYITb34UgVQGsErimJs0apaj5VpIZBZCdMaLZCUssGztaFbmNUMBPIpfxqpqiJ9D3a9v9h1YFDZA74iTfHBwu6raiAjwZDZD", "Ananya", "Poddar")
+
+# 1406034229721748
+# get_statistics(1406034229721748, 1)
+
+# /get_statistics/1406034229721748/1
