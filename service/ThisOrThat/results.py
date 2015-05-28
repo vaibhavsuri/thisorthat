@@ -35,6 +35,7 @@ def get_post_details_my_results(post_id):
 def get_post_details_others_results(post_id):
     post_item = get_post_item(post_id)
     user_id = post_item.get(db_keys.Post.get_creator_key())
+    print user_id
     user_item = get_user_item(user_id)
     _post_details = {}
     _post_details["post_id"] = int(post_item.get(db_keys.Post.get_id_key()))
@@ -55,7 +56,9 @@ def send_my_results(user_id):
     
     " get all post-ids of the posts created by this user_id"
     created_post_ids = get_all_created_post_ids(user_id)
-    
+    print created_post_ids
+    if (created_post_ids is None):
+        return json.dumps(my_results)
     " iterate over each post and store its details"
     for _post_id in created_post_ids:
         my_results.append(get_post_details_my_results(_post_id))

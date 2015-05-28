@@ -1,0 +1,8 @@
+boto==2.38.0
+facebook-sdk==0.4.0
+Flask==0.10.1
+Jinja2==2.7.3
+matplotlib==1.4.3
+numpy==1.9.2
+requests==2.5.3
+Werkzeug==0.10.4

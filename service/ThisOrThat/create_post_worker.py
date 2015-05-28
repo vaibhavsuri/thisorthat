@@ -10,8 +10,8 @@ from db_schema import post as post_db_schema
 from db_table_key_names import Post, Users
 from getDynamoDB import user_db, post_db, get_user_item
 
-pool_size = 10
-delay = 1
+pool_size = 2
+delay = 5
 
 def thread_job(delay,thread_name):
     global create_post_queue
@@ -20,6 +20,7 @@ def thread_job(delay,thread_name):
         if (len(rs) > 0):
             if create_post_queue.delete_message(rs[0]):
                 _message = rs[0].get_body()
+                print _message
                 post_query = json.loads(_message)
                 create_post(post_query)
         else:
@@ -40,8 +41,9 @@ def get_latest_post_id():
         pass
 
 def create_post(post_query):
-    latest_post_id = get_latest_post_id()
+    
     new_post = dict(post_query)
+    latest_post_id = new_post[Post.get_id_key()]
     user_id = new_post[Post.get_creator_key()]
     
     " initializing the POST table keys whose data is not received from front-end"
@@ -49,7 +51,9 @@ def create_post(post_query):
     new_post[Post.get_that_count_key()] = 0
     new_post[Post.get_complete_key()] = False
     new_post[Post.get_decision_key()] = None
-    new_post[Post.get_id_key()] = latest_post_id
+    #===========================================================================
+    # new_post[Post.get_id_key()] = latest_post_id
+    #===========================================================================
     friends_id_li = new_post[Post.get_friends_key()]
     new_post[Post.get_friends_key()] = []
     for index,friend_id in enumerate(friends_id_li):
@@ -62,7 +66,11 @@ def create_post(post_query):
 
         "adding post-id to unvoted-posts field of users table"
         friend_user_item = get_user_item(friend_id)
-        friend_user_item[Users.get_unvoted_posts_key()].append(latest_post_id)
+        #print friend_user_item
+        if (friend_user_item[Users.get_unvoted_posts_key()] is None):
+            friend_user_item[Users.get_unvoted_posts_key()] = [latest_post_id]
+        else:
+            friend_user_item[Users.get_unvoted_posts_key()].append(latest_post_id)
         friend_user_item.partial_save()
 
     
@@ -71,7 +79,10 @@ def create_post(post_query):
     
     " adding post-id into created_posts field of users table"
     user_item = get_user_item(user_id)
-    user_item[Users.get_created_posts_key()].append(latest_post_id)
+    if (user_item[Users.get_created_posts_key()] is None):
+        user_item[Users.get_created_posts_key()] = [latest_post_id]
+    else:
+        user_item[Users.get_created_posts_key()].insert(0, latest_post_id)
     user_item.partial_save()
     
 def main():

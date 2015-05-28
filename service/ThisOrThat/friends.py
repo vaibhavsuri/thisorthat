@@ -36,8 +36,8 @@ def segment_friends(user_id, tag_name):
 	return segmented_friends
 
 #returns the taggable friends for a post
-def send_friends(user_id, tag_id):
-	tag_name = db.get_tag_name(tag_id)
+def send_friends(user_id, tag_name):
+	# tag_name = db.get_tag_name(tag_id)
 	segmented_friends = segment_friends(user_id, tag_name)
 	segmented_friends_json = json.dumps(segmented_friends) #creating JSON
 	return segmented_friends_json

@@ -79,5 +79,10 @@ def set_vote(user_id, post_id, option_id):
 def set_my_decision(user_id,post_id,option_id):
 	" updates the final decision of the creator on the post created by him"
 	post_item = get_post_item(post_id)
-	post_item[Post.get_decision_key()] = option_id
+	decided_vote = ""
+	if (option_id == 1):
+		decided_vote = "this"
+	else:
+		decided_vote = "that"
+	post_item[Post.get_decision_key()] = decided_vote
 	post_item.partial_save()

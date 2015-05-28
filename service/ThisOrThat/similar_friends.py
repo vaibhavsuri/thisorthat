@@ -5,7 +5,7 @@ import sec_tags
 import getDynamoDB as db
 ###############################
 ######## GLOBAL VARS #########
-SIMILAR_SIZE = 10 #number of similar friends to store for each tag
+SIMILAR_SIZE = 5 #number of similar friends to store for each tag
 
 ###############################
 

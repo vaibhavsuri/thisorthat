@@ -4,6 +4,8 @@ import json
 import getDynamoDB as db
 import similar_friends, fb
 import db_table_key_names as keys
+from bar_plot import bar_plot
+import getS3
 
 from collections import OrderedDict
 
@@ -95,15 +97,48 @@ def get_top_influencer(user_friends, max_no):
     print "Top INF", top_influencer
     return top_influencer
 
-def get_stat_attr(list_user_data):
+def get_stat_attr(list_user_data,user_id,type="1"):
     """ Given a list of <max_no> (user_id, scores), will create <max_no> size list of objects containing attributes
     firstname, lastname, profile_photo, score | fb.get_user_details(user_id) returns an object (fn, ln, pp)"""
-    list_user_obj = []
+
+    #===========================================================================
+    # list_user_obj = []
+    # for user_data in list_user_data:
+    #     user_obj = fb.get_user_details(user_data[0])
+    #     user_obj["score"] = user_data[1]
+    #     list_user_obj.append(user_obj)
+    # 
+    #===========================================================================
+    
+    x_axis_vals = []
+    y_axis_vals = []
     for user_data in list_user_data:
         user_obj = fb.get_user_details(user_data[0])
-        user_obj["score"] = user_data[1]
-        list_user_obj.append(user_obj)
-    return list_user_obj
+        x_axis_vals.append(user_obj["first_name"].split()[0])
+        y_axis_vals.append(user_data[1])
+    
+    if type == "1":
+        fig_name = "%d_fastest_responders.jpg"%(user_id)
+        y_label = "Avg. Response Time"
+        bar_title = " Fastest Responders "
+    elif type == "2":
+        fig_name = "%d_frequent_responders.jpg"%(user_id)
+        y_label = "Number of Times Voted "
+        bar_title = " Frequent Responders "
+    elif type == "3":
+        fig_name = "%d_Top_Influencers.jpg"%(user_id)
+        y_label = "Percentage Match "
+        bar_title = " Top Influencers "
+    
+    " creating the bar plot"
+    bar_plot(x_axis_vals,y_axis_vals,fig_name=fig_name,y_label=y_label,bar_title=bar_title)
+    
+    " storing in S3"
+    file_p = open(fig_name,'rb')
+    getS3.store_file(fig_name.split(".")[0], file_p)
+    
+    curr_url = "https://s3-us-west-2.amazonaws.com/this-or-that-image-bucket/%s"%(fig_name)
+    return curr_url
 
 
 def get_statistics(user_id, max_no):
@@ -112,6 +147,13 @@ def get_statistics(user_id, max_no):
     fastest_responders = get_fastest_responders(user_friends, max_no)
     frequent_responder = get_frequent_responders(user_friends, max_no)
     top_influencers = get_top_influencer(user_friends, max_no)
-    statistics = {"fastest_responders": get_stat_attr(fastest_responders), "frequent_responder":
-                                get_stat_attr(frequent_responder), "top_influencers": get_stat_attr(top_influencers)}
-    return statistics
+    statistics = {
+                  "fastest_responders": get_stat_attr(fastest_responders,user_id,"1"), 
+                  "frequent_responders": get_stat_attr(frequent_responder,user_id,"2"),
+                  "top_influencers": get_stat_attr(top_influencers,user_id,"3")
+                  }
+    print statistics
+    return json.dumps(statistics)
+
+if __name__ == '__main__':
+    get_statistics(1428248470828832, 5)
